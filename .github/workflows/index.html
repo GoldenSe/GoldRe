@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TON Connect Test</title>
+    <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 10px 0; cursor: pointer; }
+        #status { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TON Connect Test</h1>
+        <button id="connectButton">Connect Wallet</button>
+        <button id="disconnectButton" style="display:none;">Disconnect Wallet</button>
+        <div id="status">Status: Not connected</div>
+        <div id="walletAddress"></div>
+    </div>
+
+    <script type="module">
+        const connector = new TonConnectSDK.TonConnect({
+            manifestUrl: 'https://<YOUR_USERNAME>.github.io/ton-connect-test/tonconnect-manifest.json'
+        });
+
+        document.getElementById('connectButton').addEventListener('click', async () => {
+            try {
+                const walletInfo = await connector.getWallets();
+                const wallet = walletInfo.find(wallet => wallet.universalLink);
+                if (wallet) {
+                    await connector.connect({
+                        universalLink: wallet.universalLink,
+                        bridgeUrl: wallet.bridgeUrl
+                    });
+                } else {
+                    alert('No supported wallet found');
+                }
+            } catch (error) {
+                console.error('Connection error:', error);
+                alert('Failed to connect wallet');
+            }
+        });
+
+        document.getElementById('disconnectButton').addEventListener('click', async () => {
+            try {
+                await connector.disconnect();
+                document.getElementById('status').textContent = 'Status: Disconnected';
+                document.getElementById('walletAddress').textContent = '';
+                document.getElementById('disconnectButton').style.display = 'none';
+                document.getElementById('connectButton').style.display = 'block';
+            } catch (error) {
+                console.error('Disconnection error:', error);
+                alert('Failed to disconnect wallet');
+            }
+        });
+
+        connector.onStatusChange(wallet => {
+            if (wallet) {
+                document.getElementById('status').textContent = 'Status: Connected';
+                document.getElementById('walletAddress').textContent = `Wallet Address: ${wallet.account.address}`;
+                document.getElementById('disconnectButton').style.display = 'block';
+                document.getElementById('connectButton').style.display = 'none';
+            } else {
+                document.getElementById('status').textContent = 'Status: Not connected';
+                document.getElementById('walletAddress').textContent = '';
+                document.getElementById('disconnectButton').style.display = 'none';
+                document.getElementById('connectButton').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
