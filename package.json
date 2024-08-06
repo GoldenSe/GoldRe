@@ -1,0 +1,18 @@
+{
+  "name": "gold-clicker-game",
+  "version": "1.0.0",
+  "description": "A simple gold clicker game with Tonkeeper integration",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -w -p tsconfig.json",
+    "start": "http-server ./public",
+    "deploy": "npm run build && npm run start"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.2"
+  }
+}
