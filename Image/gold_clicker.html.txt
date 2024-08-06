@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Clicker Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <!-- Панель отображения ресурсов -->
+        <div id="resourceDisplay">
+            <div class="resource">
+                <img src="path/to/stone.png" alt="Stone">
+                <span id="stoneAmount">0</span>
+            </div>
+            <div class="resource">
+                <img src="path/to/wood.png" alt="Wood">
+                <span id="woodAmount">0</span>
+            </div>
+            <div class="resource">
+                <img src="path/to/gold.png" alt="Gold">
+                <span id="goldAmount">0</span>
+            </div>
+            <div class="resource">
+                <img src="path/to/coal.png" alt="Coal">
+                <span id="coalAmount">0</span>
+            </div>
+            <div class="resource">
+                <img src="path/to/iron.png" alt="Iron">
+                <span id="ironAmount">0</span>
+            </div>
+        </div>
+
+        <!-- Сетка игры -->
+        <div id="gameGrid"></div>
+
+        <!-- Изображение шахтера -->
+        <img id="miner" src="path/to/miner.png" alt="Miner">
+
+        <!-- Изображение кирки -->
+        <img id="pickaxe" src="path/to/pickaxe.png" alt="Pickaxe">
+
+        <!-- Кнопки улучшений и ремонта -->
+        <button id="upgradeButton">Upgrade Pickaxe</button>
+        <button id="repairButton">Repair Pickaxe (5 Gold)</button>
+
+        <!-- Эффект добычи -->
+        <div id="miningEffect" class="mining-effect"></div>
+    </div>
+
+    <script>
+        let gold = 0;
+        let stone = 0;
+        let wood = 0;
+        let coal = 0;
+        let iron = 0;
+        let pickaxeHealth = 100;
+        let pickaxeUpgradeCost = 10;
+        let pickaxeDamage = 1;
+
+        // Initialize game grid
+        function createGameGrid() {
+            const gameGrid = document.getElementById('gameGrid');
+            for (let i = 0; i < 100; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                const img = document.createElement('img');
+                img.src = 'path/to/resource.png'; // Default resource image
+                cell.appendChild(img);
+                cell.addEventListener('click', () => mineResource(cell));
+                gameGrid.appendChild(cell);
+            }
+        }
+
+        function mineResource(cell) {
+            if (pickaxeHealth > 0) {
+                const resourceType = getResourceType(cell); // Define this function based on your resources
+                if (resourceType) {
+                    switch (resourceType) {
+                        case 'gold':
+                            gold += pickaxeDamage;
+                            break;
+                        case 'stone':
+                            stone += pickaxeDamage;
+                            break;
+                        case 'wood':
+                            wood += pickaxeDamage;
+                            break;
+                        case 'coal':
+                            coal += pickaxeDamage;
+                            break;
+                        case 'iron':
+                            iron += pickaxeDamage;
+                            break;
+                    }
+                    updateResourceDisplay();
+                    triggerMiningEffect(cell);
+                    pickaxeHealth -= 5;
+                    if (pickaxeHealth <= 0) {
+                        alert('Pickaxe is broken! Repair or upgrade needed.');
+                    }
+                }
+            }
+        }
+
+        function updateResourceDisplay() {
+            document.getElementById('goldAmount').innerText = gold;
+            document.getElementById('stoneAmount').innerText = stone;
+            document.getElementById('woodAmount').innerText = wood;
+            document.getElementById('coalAmount').innerText = coal;
+            document.getElementById('ironAmount').innerText = iron;
+        }
+
+        function triggerMiningEffect(cell) {
+            const effect = document.getElementById('miningEffect');
+            effect.style.top = `${cell.getBoundingClientRect().top + window.scrollY}px`;
+            effect.style.left = `${cell.getBoundingClientRect().left + window.scrollX}px`;
+            effect.style.display = 'block';
+            setTimeout(() => {
+                effect.style.display = 'none';
+            }, 300); // Effect duration
+        }
+
+        function upgradePickaxe() {
+            if (gold >= pickaxeUpgradeCost) {
+                gold -= pickaxeUpgradeCost;
+                pickaxeDamage += 1;
+                pickaxeUpgradeCost += 10; // Increase cost for next upgrade
+                updateResourceDisplay();
+            } else {
+                alert('Not enough gold to upgrade pickaxe!');
+            }
+        }
+
+        function repairPickaxe() {
+            if (gold >= 5) {
+                gold -= 5;
+                pickaxeHealth = 100;
+                updateResourceDisplay();
+            } else {
+                alert('Not enough gold to repair pickaxe!');
+            }
+        }
+
+        document.getElementById('upgradeButton').addEventListener('click', upgradePickaxe);
+        document.getElementById('repairButton').addEventListener('click', repairPickaxe);
+
+        createGameGrid();
+        updateResourceDisplay();
+    </script>
+</body>
+</html>
