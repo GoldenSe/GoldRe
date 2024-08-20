@@ -16,7 +16,6 @@
             font-family: 'Arial', sans-serif;
             color: #fff; /* Белый текст */
             text-align: center;
-            overflow: hidden; /* Убираем прокрутку */
         }
 
         img {
@@ -38,22 +37,7 @@
             font-size: 20px;
             max-width: 600px;
             line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        #coin {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background-image: url('coin.png'); /* Замените 'coin.png' на путь к изображению золотой монеты */
-            background-size: cover;
-            cursor: pointer;
-        }
-
-        #score {
-            font-size: 24px;
-            color: #ffd700;
-            margin-top: 20px;
+            margin-bottom: 5px;
         }
 
         .loader {
@@ -78,35 +62,6 @@
     <p>We're currently updating the game to bring you exciting new features and improvements.</p>
     <p>Thank you for your patience. Please check back later.</p>
     
-    <div class="loader"></div> <!-- Анимированный лоадер -->
-
-    <!-- Элемент для игры -->
-    <div id="coin"></div>
-    <div id="score">Score: 0</div>
-
-    <script>
-        let score = 0;
-
-        const coin = document.getElementById('coin');
-        const scoreDisplay = document.getElementById('score');
-
-        // Функция для случайного позиционирования монеты
-        function moveCoin() {
-            const x = Math.floor(Math.random() * (window.innerWidth - coin.offsetWidth));
-            const y = Math.floor(Math.random() * (window.innerHeight - coin.offsetHeight));
-            coin.style.left = `${x}px`;
-            coin.style.top = `${y}px`;
-        }
-
-        // Обработчик клика по монете
-        coin.addEventListener('click', () => {
-            score++;
-            scoreDisplay.textContent = `Score: ${score}`;
-            moveCoin(); // Перемещаем монету после каждого клика
-        });
-
-        // Перемещаем монету при загрузке страницы
-        moveCoin();
-    </script>
+    <div class="loader"></div> <!-- Добавлен анимированный лоадер -->
 </body>
 </html>
