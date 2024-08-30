@@ -58,21 +58,26 @@
 
         #game {
             display: grid;
-            grid-template-columns: repeat(3, 80px);
+            grid-template-columns: repeat(5, 50px);
             grid-gap: 10px;
             margin-top: 20px;
         }
 
-        .cube {
-            width: 80px;
-            height: 80px;
+        .block {
+            width: 50px;
+            height: 50px;
             background-color: #ffd700;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
             cursor: pointer;
-            user-select: none;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .block.explode {
+            transform: scale(1.5);
+            opacity: 0;
+            pointer-events: none;
         }
 
         #message {
@@ -99,42 +104,37 @@
 
     <!-- Mini-game area -->
     <div id="game">
-        <div class="cube" data-value="1">3</div>
-        <div class="cube" data-value="2">1</div>
-        <div class="cube" data-value="3">2</div>
+        <!-- Blocks to mine -->
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
+        <div class="block"></div>
     </div>
 
     <div id="message">
-        Congratulations! You solved the puzzle. Join us on Telegram: 
+        Congratulations! You've mined all the blocks. Join us on Telegram: 
         <a id="link" href="https://t.me/GoldSeekerGame" target="_blank">https://t.me/GoldSeekerGame</a>
     </div>
 
     <script>
-        const game = document.getElementById('game');
+        const blocks = document.querySelectorAll('.block');
         const message = document.getElementById('message');
-        const cubes = Array.from(document.querySelectorAll('.cube'));
 
-        // Function to swap the cubes
-        function swapCubes(index1, index2) {
-            [cubes[index1].textContent, cubes[index2].textContent] = [cubes[index2].textContent, cubes[index1].textContent];
-            [cubes[index1].dataset.value, cubes[index2].dataset.value] = [cubes[index2].dataset.value, cubes[index1].dataset.value];
-        }
+        // Add click event to each block
+        blocks.forEach(block => {
+            block.addEventListener('click', () => {
+                block.classList.add('explode'); // Add explosion effect
+                setTimeout(() => block.style.display = 'none', 200); // Hide block after animation
 
-        // Check if cubes are in the correct order
-        function checkWin() {
-            return cubes.every((cube, index) => cube.dataset.value == index + 1);
-        }
-
-        // Add click events to cubes
-        cubes.forEach((cube, index) => {
-            cube.addEventListener('click', () => {
-                if (index < cubes.length - 1) {
-                    swapCubes(index, index + 1);
-                } else {
-                    swapCubes(index, index - 1);
-                }
-                if (checkWin()) {
-                    message.style.display = 'block';
+                // Check if all blocks are mined
+                if ([...blocks].every(block => block.style.display === 'none')) {
+                    message.style.display = 'block'; // Show win message
                 }
             });
         });
