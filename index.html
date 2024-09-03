@@ -73,26 +73,51 @@
         }
     </style>
 
+    <!-- MetaMask SDK Script -->
     <script src="https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/cdn/metamask-sdk.js"></script>
     <script>
-        const MMSDK = new MetaMaskSDK.MetaMaskSDK({
-            dappMetadata: {
-                name: "Golden Seeker",
-                url: window.location.href,
-            },
-            infuraAPIKey: process.env.INFURA_API_KEY, // Make sure to replace with your actual Infura API key
+        let ethereum;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const MMSDK = new MetaMaskSDK.MetaMaskSDK({
+                    dappMetadata: {
+                        name: "Golden Seeker",
+                        url: window.location.href,
+                    },
+                    infuraAPIKey: process.env.INFURA_API_KEY, // Replace with your Infura API key
+                });
+
+                // Initialize MetaMask provider
+                ethereum = MMSDK.getProvider();
+
+                // Log initialization success
+                console.log("MetaMask SDK initialized successfully.");
+            } catch (error) {
+                console.error("Failed to initialize MetaMask SDK:", error);
+                alert("Error initializing MetaMask SDK. Please check the console for more details.");
+            }
         });
 
         function connectMetaMask() {
-            // Access MetaMask provider
-            const ethereum = MMSDK.getProvider();
+            if (!ethereum) {
+                alert('MetaMask is not initialized properly. Please try reloading the page.');
+                console.error('Ethereum provider not found.');
+                return;
+            }
 
             // Request to connect MetaMask
             ethereum.request({ method: 'eth_requestAccounts' })
                 .then(accounts => {
-                    alert('Connected: ' + accounts[0]);
+                    if (accounts.length > 0) {
+                        alert('Connected: ' + accounts[0]);
+                        console.log('Connected account:', accounts[0]);
+                    } else {
+                        alert('No accounts found. Please check MetaMask.');
+                    }
                 })
                 .catch(error => {
+                    console.error('Error connecting MetaMask:', error);
                     alert('Error connecting MetaMask: ' + error.message);
                 });
         }
