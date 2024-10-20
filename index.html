@@ -163,7 +163,7 @@
                 } else if (typeof err === 'string') {
                     setStatusNotice(err);
                 } else {
-                    setStatusNotice('An unknown error occurred');
+                    setStatusNotice('Произошла неизвестная ошибка');
                 }
                 setStatusMode('notice');
                 initializing = false;
@@ -174,7 +174,7 @@
             });
 
             if (missing.length !== 0) {
-                const missingMsg = 'Error\nThe following features required to run Godot projects on the Web are missing:\n';
+                const missingMsg = 'Ошибка\nСледующие функции, необходимые для работы проектов Godot в вебе, отсутствуют:\n';
                 displayFailureNotice(missingMsg + missing.join('\n'));
             } else {
                 setStatusMode('progress');
