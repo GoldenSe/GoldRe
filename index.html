@@ -46,44 +46,54 @@
             margin: auto;
         }
 
-        #status-progress, #status-notice {
-            display: none;
-        }
-
-        #status-progress {
-            bottom: 10%;
-            width: 50%;
-            margin: 0 auto;
-        }
-
-        #status-notice {
-            background-color: #5b3943;
-            border-radius: 0.5rem;
-            border: 1px solid #9b3943;
-            color: #e0e0e0;
-            font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
-            line-height: 1.3;
-            margin: 0 2rem;
-            overflow: hidden;
-            padding: 1rem;
-            text-align: center;
-            z-index: 1;
-        }
-
-        #wallet-panel {
+        #wallet-connection {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #fff;
-            color: #000;
+            display: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: black;
             padding: 20px;
             border-radius: 10px;
-            display: none; /* Скрыть панель до загрузки */
+            text-align: center;
+            z-index: 2;
         }
 
-        #connect-button {
-            margin-top: 10px;
+        #connect-icon {
+            width: 50px; /* Размер иконки */
+            height: 50px;
+            background-color: yellow; /* Цвет верхней части */
+            border-radius: 50%;
+            position: relative;
+            margin-bottom: 10px;
+            animation: spin 2s linear infinite; /* Анимация вращения */
+        }
+
+        /* Шахматный узор */
+        #connect-icon::before,
+        #connect-icon::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            background-color: black; /* Цвет нижней части */
+        }
+
+        #connect-icon::before {
+            top: 0;
+            left: 0;
+        }
+
+        #connect-icon::after {
+            bottom: 0;
+            right: 0;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
     <link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
@@ -102,9 +112,9 @@
         <progress id="status-progress"></progress>
         <div id="status-notice"></div>
     </div>
-    <div id="wallet-panel">
-        <h2>Подключение Кошелька</h2>
-        <button id="connect-button">Подключить</button>
+    <div id="wallet-connection">
+        <div id="connect-icon"></div>
+        <h2>Подключение...</h2>
     </div>
     <script src="index.js"></script>
     <script>
@@ -125,7 +135,7 @@
             const statusOverlay = document.getElementById('status');
             const statusProgress = document.getElementById('status-progress');
             const statusNotice = document.getElementById('status-notice');
-            const walletPanel = document.getElementById('wallet-panel');
+            const walletConnection = document.getElementById('wallet-connection');
 
             let initializing = true;
             let statusMode = '';
@@ -190,19 +200,20 @@
                     },
                 }).then(() => {
                     setStatusMode('hidden');
-                    // Отобразите панель подключения кошелька после загрузки
-                    walletPanel.style.display = 'block';
+                    // Инициализация подключения к кошельку
+                    initializeWallet();
                 }, displayFailureNotice);
             }
 
             // Функция для инициализации кошелька
-            function initializeWallet() {
-                console.log("Инициализация кошелька...");
-                // Здесь вы можете использовать API вашего кошелька
-            }
+            async function initializeWallet() {
+                walletConnection.style.display = 'block'; // Показать иконку подключения
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Ждать 2 секунды
+                walletConnection.style.display = 'none'; // Скрыть иконку подключения
 
-            // Обработчик события нажатия на кнопку подключения
-            document.getElementById('connect-button').addEventListener('click', initializeWallet);
+                // Здесь вы можете использовать API вашего кошелька
+                console.log("Инициализация кошелька...");
+            }
 
             // Проверка на мобильное устройство
             if (!/Mobi|Android/i.test(navigator.userAgent)) {
